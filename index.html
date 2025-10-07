@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SonderOfSorrows</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: "Times New Roman", serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .title-container {
+      position: relative;
+      z-index: 20;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+      transition: all 0.8s ease;
+      animation: float 6s ease-in-out infinite;
+      z-index: 10;
+      white-space: pre;
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    h1.active {
+      color: #fff;
+      text-shadow: 0 0 30px white, 0 0 60px rgba(255, 255, 255, 0.9);
+      transform: scale(1.05);
+    }
+
+    h1 span {
+      font-family: "Rock Salt", cursive;
+      color: #fff;
+      text-shadow: 0 0 15px white, 0 0 40px rgba(255, 255, 255, 0.8);
+    }
+
+    p {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      z-index: 10;
+    }
+
+    /* Instagram Logo */
+    .instagram-logo {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%) scale(0) rotate(-180deg);
+      font-size: 2.5rem;
+      color: #FFD700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+      z-index: 25;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      cursor: pointer;
+    }
+
+    .instagram-logo.show {
+      animation: instagramAppear 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards;
+    }
+
+    .instagram-logo.hide {
+      animation: instagramDisappear 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    }
+
+    .instagram-logo:hover {
+      color: #fff;
+      text-shadow: 0 0 30px white, 0 0 50px rgba(255, 255, 255, 0.9);
+      transform: translateX(-50%) scale(1.2);
+    }
+
+    @keyframes instagramAppear {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0) rotate(-180deg);
+      }
+      70% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.1) rotate(10deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes instagramDisappear {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) rotate(0deg);
+      }
+      30% {
+        opacity: 0.8;
+        transform: translateX(-50%) scale(1.1) rotate(-10deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0) rotate(180deg);
+      }
+    }
+
+    /* Tape base untuk animasi X */
+    .tape {
+      position: absolute;
+      height: 40px;
+      width: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        #FFD700,
+        #FFD700 25px,
+        black 25px,
+        black 50px
+      );
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+      border-radius: 4px;
+      opacity: 0;
+      z-index: 15;
+      transform-origin: center;
+      top: 50%;
+      left: 50%;
+    }
+
+    /* Tape positions untuk animasi X */
+    .tape.one {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .tape.two {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Tape atas dan bawah */
+    .tape-top, .tape-bottom {
+      position: absolute;
+      height: 25px;
+      width: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        #FFD700,
+        #FFD700 20px,
+        black 20px,
+        black 40px
+      );
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+      border-radius: 3px;
+      opacity: 0;
+      z-index: 18;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tape-top {
+      top: -60px;
+    }
+
+    .tape-bottom {
+      bottom: -60px;
+    }
+
+    /* Animasi X muncul (klik pertama) */
+    .tape.show-x {
+      animation: tapeXAppear 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    /* Animasi X masuk dan hilang (klik kedua) */
+    .tape.show-enter {
+      animation: tapeEnterAndVanish 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    /* Animasi tape atas/bawah muncul */
+    .tape-top.show, .tape-bottom.show {
+      animation: tapeHorizontalAppear 0.6s ease-out 1s forwards;
+    }
+
+    /* Animasi tape atas/bawah hilang */
+    .tape-top.hide, .tape-bottom.hide {
+      animation: tapeHorizontalDisappear 0.4s ease-in forwards;
+    }
+
+    @keyframes tapeXAppear {
+      0% {
+        width: 0;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(0.8);
+      }
+      60% {
+        width: 250vh;
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(1);
+      }
+      100% {
+        width: 250vh;
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(1);
+      }
+    }
+
+    @keyframes tapeEnterAndVanish {
+      0% {
+        width: 250vh;
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(1);
+      }
+      30% {
+        width: 120%;
+        opacity: 0.9;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(0.9);
+      }
+      60% {
+        width: 80%;
+        opacity: 0.7;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(0.7);
+      }
+      100% {
+        width: 0;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rotate, 45deg)) scale(0.5);
+      }
+    }
+
+    @keyframes tapeHorizontalAppear {
+      0% {
+        width: 0;
+        opacity: 0;
+      }
+      60% {
+        width: 120%;
+        opacity: 1;
+      }
+      100% {
+        width: 100%;
+        opacity: 1;
+      }
+    }
+
+    @keyframes tapeHorizontalDisappear {
+      0% {
+        width: 100%;
+        opacity: 1;
+      }
+      40% {
+        width: 120%;
+        opacity: 0.8;
+      }
+      100% {
+        width: 0;
+        opacity: 0;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background: #fff;
+      margin-left: 3px;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Glow effect */
+    .glow-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+      z-index: 5;
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+
+    .glow-overlay.active {
+      width: 400px;
+      height: 400px;
+      opacity: 1;
+    }
+
+    .glow-overlay.fade-out {
+      width: 0;
+      height: 0;
+      opacity: 0;
+      transition: all 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="title-container">
+    <h1 id="title">SonderOfSorrows</h1>
+    <p>COMING SOON</p>
+    
+    <!-- Instagram Logo -->
+    <a href="https://www.instagram.com/sondersofsorrows/" target="_blank" class="instagram-logo">
+      <i class="fab fa-instagram"></i>
+    </a>
+    
+    <div class="tape-top"></div>
+    <div class="tape-bottom"></div>
+  </div>
+
+  <div class="tape one"></div>
+  <div class="tape two"></div>
+  <div class="glow-overlay"></div>
+
+  <script>
+    const title = document.getElementById("title");
+    const tape1 = document.querySelector(".tape.one");
+    const tape2 = document.querySelector(".tape.two");
+    const tapeTop = document.querySelector(".tape-top");
+    const tapeBottom = document.querySelector(".tape-bottom");
+    const instagramLogo = document.querySelector(".instagram-logo");
+    const body = document.querySelector("body");
+    const glowOverlay = document.querySelector(".glow-overlay");
+
+    let clickCount = 0;
+
+    // Set custom properties untuk rotasi
+    tape1.style.setProperty('--rotate', '45deg');
+    tape2.style.setProperty('--rotate', '-45deg');
+
+    function typeWriterEffect(text, delay = 100) {
+      return new Promise((resolve) => {
+        title.textContent = "";
+        let i = 0;
+        const cursor = document.createElement("span");
+        cursor.className = "cursor";
+        title.appendChild(cursor);
+
+        const interval = setInterval(() => {
+          if (i < text.length) {
+            cursor.insertAdjacentText("beforebegin", text.charAt(i));
+            i++;
+          } else {
+            clearInterval(interval);
+            setTimeout(() => cursor.remove(), 300);
+            resolve();
+          }
+        }, delay);
+      });
+    }
+
+    function firstClick() {
+      // Reset semua state
+      resetAllTapes();
+      
+      // Animasi X muncul dan tetap ada
+      tape1.classList.add('show-x');
+      tape2.classList.add('show-x');
+      
+      // Activate glow
+      glowOverlay.classList.remove('fade-out');
+      glowOverlay.classList.add('active');
+      
+      // Change text
+      setTimeout(async () => {
+        await typeWriterEffect('SonderOf "Sorrows"', 120);
+      }, 500);
+      
+      title.classList.add("active");
+      clickCount = 1;
+    }
+
+    function secondClick() {
+      // Hapus animasi X muncul, ganti dengan animasi masuk
+      tape1.classList.remove('show-x');
+      tape2.classList.remove('show-x');
+      
+      // Trigger reflow
+      void tape1.offsetWidth;
+      void tape2.offsetWidth;
+      
+      // Animasi X masuk dan hilang
+      tape1.classList.add('show-enter');
+      tape2.classList.add('show-enter');
+      
+      // Munculin tape atas/bawah dan Instagram setelah X hilang
+      setTimeout(() => {
+        tapeTop.classList.add('show');
+        tapeBottom.classList.add('show');
+        instagramLogo.classList.add('show');
+      }, 800);
+      
+      clickCount = 2;
+    }
+
+    function resetAll() {
+      // Reset semua ke state awal
+      resetAllTapes();
+      instagramLogo.classList.remove('show', 'hide');
+      
+      // Deactivate glow
+      glowOverlay.classList.remove('active');
+      glowOverlay.classList.add('fade-out');
+      
+      // Reset text
+      setTimeout(async () => {
+        await typeWriterEffect("SonderOfSorrows", 100);
+      }, 300);
+      
+      title.classList.remove("active");
+      clickCount = 0;
+    }
+
+    function resetAllTapes() {
+      tape1.classList.remove('show-x', 'show-enter');
+      tape2.classList.remove('show-x', 'show-enter');
+      tapeTop.classList.remove('show', 'hide');
+      tapeBottom.classList.remove('show', 'hide');
+    }
+
+    function handleClick() {
+      switch(clickCount) {
+        case 0:
+          firstClick();
+          break;
+        case 1:
+          secondClick();
+          break;
+        case 2:
+          resetAll();
+          break;
+      }
+    }
+
+    // Event Listeners
+    title.addEventListener("click", handleClick);
+    body.addEventListener("click", (e) => {
+      if (e.target === body) {
+        handleClick();
+      }
+    });
+
+    // Prevent Instagram click from triggering tape toggle
+    instagramLogo.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    // Initialize
+    typeWriterEffect("SonderOfSorrows", 100);
+  </script>
+</body>
+</html>
